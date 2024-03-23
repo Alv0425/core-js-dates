@@ -148,8 +148,15 @@ function isDateInPeriod(date, period) {
  * '1999-01-05T02:20:00.000Z' => '1/5/1999, 2:20:00 AM'
  * '2010-12-15T22:59:00.000Z' => '12/15/2010, 10:59:00 PM'
  */
-function formatDate(/* date */) {
-  throw new Error('Not implemented');
+function formatDate(date) {
+  const newDate = new Date(date);
+  const time = newDate.toLocaleDateString('en-US', {
+    timeZone: 'UTC',
+    hour: 'numeric',
+    minute: '2-digit',
+    second: '2-digit',
+  });
+  return `${time}`;
 }
 
 /**
@@ -164,8 +171,32 @@ function formatDate(/* date */) {
  * 12, 2023 => 10
  * 1, 2024 => 8
  */
-function getCountWeekendsInMonth(/* month, year */) {
-  throw new Error('Not implemented');
+function getCountWeekendsInMonth(month, year) {
+  const firstDayOfMonth = new Date(year, month - 1, 1);
+  const lastDayOfMonth = new Date(year, month, 0);
+  const numOfDays = lastDayOfMonth.getDate();
+  const firstDayOfWeek = firstDayOfMonth.getDay();
+  const sundayDateShift = 8 - ((firstDayOfWeek + 1) % 7);
+  const saturdayDateShift = 7 - ((firstDayOfWeek + 1) % 7);
+  let sundayDate = new Date(
+    firstDayOfMonth.getTime() + sundayDateShift * 86400000
+  );
+  let saturdayDate = new Date(
+    firstDayOfMonth.getTime() + saturdayDateShift * 86400000
+  );
+
+  if (firstDayOfWeek === 6) {
+    saturdayDate = firstDayOfMonth;
+    sundayDate = new Date(firstDayOfMonth.getTime() + 86400000);
+  }
+  if (firstDayOfWeek === 0) {
+    sundayDate = firstDayOfMonth;
+  }
+  return (
+    Math.floor((numOfDays - saturdayDate.getDate()) / 7) +
+    Math.floor((numOfDays - sundayDate.getDate()) / 7) +
+    2
+  );
 }
 
 /**
@@ -181,8 +212,12 @@ function getCountWeekendsInMonth(/* month, year */) {
  * Date(2024, 0, 31) => 5
  * Date(2024, 1, 23) => 8
  */
-function getWeekNumberByDate(/* date */) {
-  throw new Error('Not implemented');
+function getWeekNumberByDate(date) {
+  const dateYear = date.getUTCFullYear();
+  const firstDay = new Date(dateYear, 0, 1);
+  const delta =
+    (date.getTime() - firstDay.getTime()) / 86400000 + 1 + firstDay.getUTCDay();
+  return Math.ceil(delta / 7);
 }
 
 /**
