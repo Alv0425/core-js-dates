@@ -49,7 +49,16 @@ function getTime(date) {
  */
 function getDayName(date) {
   const newDate = new Date(date);
-  return newDate.toLocaleDateString('en-US', { weekday: 'long' });
+  const days = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ];
+  return days[newDate.getUTCDay()];
 }
 
 /**
@@ -64,7 +73,7 @@ function getDayName(date) {
  * Date('2024-02-16T00:00:00Z') => Date('2024-02-23T00:00:00Z')
  */
 function getNextFriday(date) {
-  const addition = ((4 - date.getDay() + 7) % 7) + 1;
+  const addition = ((4 - date.getUTCDay() + 7) % 7) + 1;
   const nextFriday = new Date(date.getTime() + addition * 86400000);
   return nextFriday;
 }
